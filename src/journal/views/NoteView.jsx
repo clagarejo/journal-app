@@ -4,7 +4,14 @@ import { ImageGalery } from "../components/ImageGalery"
 
 export const NoteView = () => {
     return (
-        <Grid container direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+        <Grid
+            className="animate__animated animate__fadeIn animate__faster"
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ mb: 1 }}
+        >
             <Grid item>
                 <Typography fontSize={39} fontWeight="light">
                     19 de marzo 2024
@@ -35,7 +42,7 @@ export const NoteView = () => {
                     multiline
                     placeholder="¿Qué sucedio hoy?"
                     sx={{ border: 'none', mb: 1 }}
-                    minRows={ 5 }
+                    minRows={5}
                 />
             </Grid>
 

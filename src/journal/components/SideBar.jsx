@@ -1,55 +1,59 @@
 import { TurnedInNot } from "@mui/icons-material"
 import { Box, Divider, Drawer, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material"
+import { useSelector } from "react-redux"
 
 export const SideBar = ({ drawerWidth = 240 }) => {
-  return (
-    <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-    >
 
-        <Drawer
-            variant="permanent"
-            open
-            sx={{ 
-                display: { xs: 'block' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
-            }}
+    const { displayName } = useSelector( state => state.auth)
+
+    return (
+        <Box
+            component="nav"
+            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
         >
 
-            <Toolbar>
-                <Typography variant="h6" noWrap component="div">
-                    Yan Lagarejo
-                </Typography>
-            </Toolbar>
+            <Drawer
+                variant="permanent"
+                open
+                sx={{
+                    display: { xs: 'block' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
+                }}
+            >
 
-            <Divider />
+                <Toolbar>
+                    <Typography variant="h6" noWrap component="div">
+                        { displayName }
+                    </Typography>
+                </Toolbar>
 
-            <List>
+                <Divider />
 
-                {
-                    ['Enero', 'Febrero', 'Marzo', 'Abril'].map( text => (
-                        <ListItem key={ text } disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <TurnedInNot />
-                                </ListItemIcon>
+                <List>
 
-                                <Grid container>
-                                    <ListItemText primary={ text } />
-                                    <ListItemText secondary={ 'Holaaaaaaaaaaaaaa' } />
-                                </Grid>
+                    {
+                        ['Enero', 'Febrero', 'Marzo', 'Abril'].map(text => (
+                            <ListItem key={text} disablePadding>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <TurnedInNot />
+                                    </ListItemIcon>
 
-                            </ListItemButton>
-                        </ListItem>
-                    ))
-                }
+                                    <Grid container>
+                                        <ListItemText primary={text} />
+                                        <ListItemText secondary={'Holaaaaaaaaaaaaaa'} />
+                                    </Grid>
 
-            </List>
+                                </ListItemButton>
+                            </ListItem>
+                        ))
+                    }
+
+                </List>
 
 
-        </Drawer>
-        
-    </Box>
-  )
+            </Drawer>
+
+        </Box>
+    )
 }
