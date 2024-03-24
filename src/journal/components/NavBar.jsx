@@ -48,7 +48,6 @@ export const NavBar = ({ drawerWidth = 240 }) => {
                     </IconButton>
 
                 </Grid>
-
             </Toolbar>
         </AppBar>
     )
