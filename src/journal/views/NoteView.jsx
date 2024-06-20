@@ -1,13 +1,19 @@
-import { SaveOutlined } from "@mui/icons-material"
-import { Button, Grid, TextField, Typography } from "@mui/material"
-import { ImageGalery } from "../components/ImageGalery"
-import { useForm } from "../../hooks/useForm"
+import { useEffect, useMemo, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useEffect, useMemo } from "react"
-import { setActiveNote } from "../../store/journal/journalSice"
-import { startSaveNote } from "../../store/journal"
+import { useForm } from "../../hooks/useForm"
 
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+
+
+import { DeleteOutline, SaveOutlined, UploadOutlined } from "@mui/icons-material"
+import { Button, Grid, IconButton, TextField, Typography } from "@mui/material"
+
+import { ImageGalery } from "../components/ImageGalery"
+
+
+import { setActiveNote } from "../../store/journal/journalSice"
+import { startDeletingNote, startSaveNote, startUploadingFile } from "../../store/journal"
+
 
 
 import Swal from "sweetalert2"
@@ -27,6 +33,8 @@ export const NoteView = () => {
 
     }, [date])
 
+    const fileInputRef = useRef()
+
     useEffect(() => {
         dispatch(setActiveNote(formState))
     }, [formState]);
@@ -41,11 +49,20 @@ export const NoteView = () => {
         dispatch(startSaveNote())
     }
 
+    const onFileInputChange = ({ target }) => {
+        if (target.files === 0) return
+        dispatch(startUploadingFile(target.files))
+    }
+
+    const onDelete = () => {
+        dispatch( startDeletingNote() );
+    }
+
     return (
         <HelmetProvider>
-            
+
             <Helmet>
-                <title> {!!note.title ? note.title : 'Nota'} </title>
+                <title> {!!note.title ? `Nota | ${note.title}` : 'Nota'} </title>
                 <meta name="description" content="Página para gestionar tus notas." />
                 <meta name="keywords" content="journal, notas" />
             </Helmet>
@@ -65,6 +82,22 @@ export const NoteView = () => {
                 </Grid>
 
                 <Grid item>
+
+                    <input type="file"
+                        multiple
+                        ref={fileInputRef}
+                        onChange={onFileInputChange}
+                        style={{ display: 'none' }}
+                    />
+
+                    <IconButton
+                        color="primary"
+                        disabled={isSaving}
+                        onClick={() => fileInputRef.current.click()}
+                    >
+                        <UploadOutlined />
+                    </IconButton>
+
                     <Button
                         color="primary"
                         sx={{ padding: 2 }}
@@ -94,8 +127,7 @@ export const NoteView = () => {
                         variant="filled"
                         fullWidth
                         multiline
-                        placeholder="¿Qué sucedio hoy?"
-                        sx={{ border: 'none', mb: 1 }}
+                        placeholder="¿Qué sucedió en el día de hoy?"
                         minRows={5}
                         name="body"
                         value={body}
@@ -103,7 +135,18 @@ export const NoteView = () => {
                     />
                 </Grid>
 
-                <ImageGalery />
+                <Grid container justifyContent='end'>
+                    <Button
+                        onClick={onDelete}
+                        sx={{ mt: 2 }}
+                        color="error"
+                    >
+                        <DeleteOutline />
+                        Borrar
+                    </Button>
+                </Grid>
+
+                <ImageGalery images={note.imageUrls} />
 
             </Grid>
         </HelmetProvider>
