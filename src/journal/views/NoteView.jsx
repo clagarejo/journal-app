@@ -1,68 +1,64 @@
-import { useEffect, useMemo, useRef } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useForm } from "../../hooks/useForm"
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "../../hooks/useForm";
 
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
+import { DeleteOutline, SaveOutlined, UploadOutlined } from "@mui/icons-material";
+import { Button, Grid, IconButton, TextField, Typography } from "@mui/material";
 
-import { DeleteOutline, SaveOutlined, UploadOutlined } from "@mui/icons-material"
-import { Button, Grid, IconButton, TextField, Typography } from "@mui/material"
+import { ImageGalery } from "../components/ImageGalery";
 
-import { ImageGalery } from "../components/ImageGalery"
+import { setActiveNote } from "../../store/journal/journalSice";
+import { startDeletingNote, startSaveNote, startUploadingFile } from "../../store/journal";
 
-
-import { setActiveNote } from "../../store/journal/journalSice"
-import { startDeletingNote, startSaveNote, startUploadingFile } from "../../store/journal"
-
-
-
-import Swal from "sweetalert2"
-import 'sweetalert2/dist/sweetalert2.css'
+import Swal from "sweetalert2";
+import 'sweetalert2/dist/sweetalert2.css';
 
 export const NoteView = () => {
 
-    const dispatch = useDispatch()
-    const { active: note, messageSaved, isSaving } = useSelector(state => state.journal)
+    const dispatch = useDispatch();
+    const { active: note, messageSaved, isSaving } = useSelector(state => state.journal);
 
-    const { body, title, date, onInputChange, formState } = useForm(note)
+    const { body, title, date, onInputChange, formState } = useForm(note);
 
     const dateString = useMemo(() => {
+        const newDate = new Date(date);
+        return newDate.toUTCString();
+    }, [date]);
 
-        const newDate = new Date(date)
-        return newDate.toUTCString()
+    const fileInputRef = useRef();
 
-    }, [date])
-
-    const fileInputRef = useRef()
+    const [isSavedClicked, setIsSavedClicked] = useState(false);
 
     useEffect(() => {
-        dispatch(setActiveNote(formState))
-    }, [formState]);
+        dispatch(setActiveNote(formState));
+    }, [formState, dispatch]);
 
     useEffect(() => {
         if (messageSaved.length > 0) {
-            Swal.fire('Nota actualizada', messageSaved, 'success')
+            Swal.fire('Nota actualizada', messageSaved, 'success');
         }
     }, [messageSaved]);
 
     const onSaveNote = () => {
-        dispatch(startSaveNote())
-    }
+        setIsSavedClicked(true);
+        dispatch(startSaveNote());
+    };
 
     const onFileInputChange = ({ target }) => {
-        if (target.files === 0) return
-        dispatch(startUploadingFile(target.files))
-    }
+        if (target.files === 0) return;
+        dispatch(startUploadingFile(target.files));
+    };
 
     const onDelete = () => {
-        dispatch( startDeletingNote() );
-    }
+        dispatch(startDeletingNote());
+    };
 
     return (
         <HelmetProvider>
-
             <Helmet>
-                <title> {!!note.title ? `Nota | ${note.title}` : 'Nota'} </title>
+                <title>{isSavedClicked && note.title ? `Nota | ${note.title}` : 'Nota'}</title>
                 <meta name="description" content="Página para gestionar tus notas." />
                 <meta name="keywords" content="journal, notas" />
             </Helmet>
